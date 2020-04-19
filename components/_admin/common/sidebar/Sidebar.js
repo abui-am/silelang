@@ -1,12 +1,19 @@
 import React from "react";
-import { Box, makeStyles, Typography, ButtonBase } from "@material-ui/core";
+import {
+  Hidden,
+  Box,
+  makeStyles,
+  Typography,
+  ButtonBase
+} from "@material-ui/core";
 import Img from "react-image";
 import { Dashboard } from "@material-ui/icons";
 
 const AdminSidebar = props => {
   const AdminSidebarStyle = makeStyles(theme => ({
     root: {
-      flexBasis: 256,
+      minHeight: "100vh",
+      width: 256,
       flexShrink: 0,
       background: "#FFFFFF",
       boxShadow: "0px 4px 30px rgba(0, 0, 0, 0.1)",
@@ -85,39 +92,43 @@ const AdminSidebar = props => {
 
   return (
     <React.Fragment>
-      <Box className={classes.root}>
-        <Box className={classes.sidebarHeader}>
-          <Img className={classes.profilePicture}></Img>
-          <Typography className={classes.adminName}>Aaoron Hyrules</Typography>
-        </Box>
-        <Box className={classes.sidebarBody}>
-          <Box
-            component={ButtonBase}
-            className={classes.sidebarTextContainerActive}
-          >
-            <Dashboard className={classes.sidebarIconActive} />
-            <Typography className={classes.sidebarTextActive}>
-              Dashboard
+      <Hidden only={["sm", "xs"]}>
+        <Box className={classes.root}>
+          <Box className={classes.sidebarHeader}>
+            <Img className={classes.profilePicture}></Img>
+            <Typography className={classes.adminName}>
+              Aaoron Hyrules
             </Typography>
           </Box>
-          <Box className={classes.sidebarTextContainer}>
-            <Dashboard className={classes.sidebarIcon} />
-            <Typography className={classes.sidebarText}>Barang</Typography>
-          </Box>
-          <Box className={classes.sidebarTextContainer}>
-            <Dashboard className={classes.sidebarIcon} />
-            <Typography className={classes.sidebarText}>Leleang</Typography>
-          </Box>
-          <Box className={classes.sidebarTextContainer}>
-            <Dashboard className={classes.sidebarIcon} />
-            <Typography className={classes.sidebarText}>Pengguna</Typography>
-          </Box>
-          <Box className={classes.sidebarTextContainer}>
-            <Dashboard className={classes.sidebarIcon} />
-            <Typography className={classes.sidebarText}>Petugas</Typography>
+          <Box className={classes.sidebarBody}>
+            <Box
+              component={ButtonBase}
+              className={classes.sidebarTextContainerActive}
+            >
+              <Dashboard className={classes.sidebarIconActive} />
+              <Typography className={classes.sidebarTextActive}>
+                Dashboard
+              </Typography>
+            </Box>
+            <Box className={classes.sidebarTextContainer}>
+              <Dashboard className={classes.sidebarIcon} />
+              <Typography className={classes.sidebarText}>Barang</Typography>
+            </Box>
+            <Box className={classes.sidebarTextContainer}>
+              <Dashboard className={classes.sidebarIcon} />
+              <Typography className={classes.sidebarText}>Leleang</Typography>
+            </Box>
+            <Box className={classes.sidebarTextContainer}>
+              <Dashboard className={classes.sidebarIcon} />
+              <Typography className={classes.sidebarText}>Pengguna</Typography>
+            </Box>
+            <Box className={classes.sidebarTextContainer}>
+              <Dashboard className={classes.sidebarIcon} />
+              <Typography className={classes.sidebarText}>Petugas</Typography>
+            </Box>
           </Box>
         </Box>
-      </Box>
+      </Hidden>
     </React.Fragment>
   );
 };

@@ -28,7 +28,7 @@ class MyDocument extends Document {
   }
   render() {
     return (
-      <Html>
+      <Html height="100%">
         <Head>
           <link
             rel="shortcut icon"
@@ -41,7 +41,7 @@ class MyDocument extends Document {
             content="width=device-width, initial-scale=1.0"
           />
         </Head>
-        <body className="custom_class">
+        <body style={{ height: "100%" }} className="custom_class">
           <Main />
           <NextScript />
         </body>

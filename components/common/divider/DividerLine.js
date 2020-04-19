@@ -1,11 +1,14 @@
-const DividerLine = () => {
+import { Box } from "@material-ui/core";
+
+const DividerLine = (props) => {
   return (
-    <hr
+    <Box
       style={{
-        border: "1px solid #e4e4e4",
-        margin: "16px 0px"
+        borderBottom: "1px solid #e4e4e4",
+        margin: "16px 0px",
       }}
-    ></hr>
+      {...props}
+    ></Box>
   );
 };
 

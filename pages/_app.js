@@ -2,12 +2,24 @@ import { ThemeProvider } from "@material-ui/core";
 import theme from "./../theme/Theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import "react-toastify/dist/ReactToastify.css";
+import { StateProvider, authStore } from "../ctx/AuthStore";
+import Login from "../components/auth/Login";
+import Register from "../components/auth/Register";
+import Cookies from "js-cookie";
+import { ToastContainer } from "react-toastify";
 
 function MyApp({ Component, pageProps }) {
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Component {...pageProps} />
+      <StateProvider>
+        <Login />
+        <Register />
+        <ToastContainer />
+
+        <CssBaseline />
+        <Component {...pageProps} />
+      </StateProvider>
     </ThemeProvider>
   );
 }

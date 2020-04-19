@@ -5,27 +5,27 @@ import { Box, Typography, Hidden } from "@material-ui/core";
 import ItemCards from "../../components/searchPage/itemCards/ItemCards";
 import Pagination from "@material-ui/lab/Pagination";
 import Footer from "../../components/common/footer/Footer";
-
-const SearchIndex = props => {
-  const SearchStyle = makeStyles(theme => ({
+import { getApi } from "../../api/Api";
+const SearchIndex = (props) => {
+  const SearchStyle = makeStyles((theme) => ({
     root: {
       display: "flex",
       paddingTop: 38,
       [theme.breakpoints.up("xs")]: {
         paddingLeft: 80,
-        paddingRight: 80
+        paddingRight: 80,
       },
       [theme.breakpoints.only("xs")]: {
         paddingRight: theme.spacing(3),
-        paddingLeft: theme.spacing(3)
-      }
+        paddingLeft: theme.spacing(3),
+      },
     },
     //filterNav
     filterNavContainer: {
       flexBasis: "227px",
       paddingTop: 17,
       flexGrow: 0,
-      flexShrink: 0
+      flexShrink: 0,
     },
     filterTitle: {
       fontFamily: "Lato",
@@ -34,7 +34,7 @@ const SearchIndex = props => {
       fontSize: 24,
       lineHeight: "28px",
       marginBottom: 14,
-      color: "#121212"
+      color: "#121212",
     },
     filterCategoryText: {
       fontFamily: "Merriweather",
@@ -43,7 +43,7 @@ const SearchIndex = props => {
       fontSize: 18,
       lineHeight: "23px",
       marginBottom: 18,
-      color: "#323232"
+      color: "#323232",
     },
     filterOptionText: {
       fontFamily: "Lato",
@@ -52,11 +52,11 @@ const SearchIndex = props => {
       fontSize: 14,
       marginBottom: theme.spacing(2),
       lineHeight: "17px",
-      color: "#61AAED"
+      color: "#61AAED",
     },
     // itemListContainer
     itemListContainer: {
-      flexGrow: 1
+      flexGrow: 1,
     },
     searchTitle: {
       fontFamily: "Lato",
@@ -65,7 +65,7 @@ const SearchIndex = props => {
       fontSize: "36px",
       lineHeight: "43px",
       color: "#121212",
-      marginBottom: theme.spacing(2)
+      marginBottom: theme.spacing(2),
     },
     fromResultText: {
       fontFamily: "Merriweather",
@@ -74,16 +74,18 @@ const SearchIndex = props => {
       fontSize: 18,
       lineHeight: "23px",
       color: "#323232",
-      marginBottom: theme.spacing(4)
+      marginBottom: theme.spacing(4),
     },
     paginationContainer: {
       paddingTop: 60,
       paddingBottom: theme.spacing(6),
       alignContent: "center",
       display: "flex",
-      justifyContent: "center"
-    }
+      justifyContent: "center",
+    },
   }));
+
+  const { auctionData } = props;
 
   const classes = SearchStyle();
   return (
@@ -108,7 +110,7 @@ const SearchIndex = props => {
             Untuk hasil dari “Mobil”
           </Typography>
 
-          <ItemCards models={[0, 0, 0, 0, 0, 0, 0, 0]} />
+          <ItemCards models={auctionData} />
           <Box className={classes.paginationContainer}>
             <Pagination count={10} shape="rounded" />
           </Box>
@@ -120,3 +122,12 @@ const SearchIndex = props => {
 };
 
 export default SearchIndex;
+
+SearchIndex.getInitialProps = async (ctx) => {
+  const { id } = await ctx.query;
+
+  const auctionData = await getApi().get(`auctions/search/${id}`);
+  return {
+    auctionData: auctionData.data,
+  };
+};

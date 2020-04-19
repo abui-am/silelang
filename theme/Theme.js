@@ -41,6 +41,14 @@ const theme = createMuiTheme({
     button: {
       textTransform: "none",
       letterSpacing: 1
+    },
+    html: {
+      height: "100%"
+    },
+
+    body: {
+      height: "100%",
+      margin: 0
     }
   }
 });
