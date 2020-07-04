@@ -113,7 +113,7 @@ export default function Login() {
 
     await setIsFetching(false);
     if (!userData.isAxiosError) {
-      auth.dispatch({ type: "handleLogin", payload: userData.data[0] });
+      auth.dispatch({ type: "handleLogin", payload: userData.data });
       auth.dispatch({ type: "closeLogin" });
       Cookies.set("auth", data);
     } else {
@@ -125,7 +125,7 @@ export default function Login() {
     const userData = await getApi()
       .post("users/login", await data)
       .catch((e) => console.log(e));
-    auth.dispatch({ type: "handleLogin", payload: userData.data[0] });
+    auth.dispatch({ type: "handleLogin", payload: userData.data });
   };
 
   useEffect(() => {

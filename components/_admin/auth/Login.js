@@ -81,7 +81,7 @@ const AdminLogin = () => {
       Cookies.set("adminAuth", data);
       await admin.dispatch({
         type: "handleLogin",
-        payload: await adminData.data[0],
+        payload: await adminData.data,
       });
       await router.replace("/_admin/items");
     } catch (e) {

@@ -1,6 +1,7 @@
 import React from "react";
 import AdminSidebar from "../components/_admin/common/sidebar/Sidebar";
 import { AdminProvider } from "../ctx/AdminAuthStore";
+import { Box } from "@material-ui/core";
 
 const AdminLayout = (props) => {
   return (

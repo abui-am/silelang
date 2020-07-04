@@ -3,19 +3,21 @@ import AdminSidebar from "../../../components/_admin/common/sidebar/Sidebar";
 import { Box, makeStyles, Typography, Grid } from "@material-ui/core";
 import DashboardHeader from "../../../components/_admin/common/dashboardHeader/DashboardHeader";
 import ItemCard from "../../../components/_admin/users/itemCard";
-const AuctionsDashboard = props => {
-  const AuctionsDashboardStyle = makeStyles({
+import { getApi } from "../../../api/Api";
+const UsersDasboard = (props) => {
+  const UsersDashboardStyle = makeStyles({
     root: {
       display: "flex",
       minHeight: "100%",
-      background: "#FBFCFD"
+      background: "#FBFCFD",
     },
     itemContainer: {
-      margin: "40px 53px"
-    }
+      margin: "40px 53px",
+    },
   });
-
-  const classes = AuctionsDashboardStyle();
+  const { usersData } = props;
+  const classes = UsersDashboardStyle();
+  const userToShow = usersData.slice(0, 15);
   return (
     <React.Fragment>
       <Box className={classes.root}>
@@ -31,7 +33,7 @@ const AuctionsDashboard = props => {
                 alignItems="flex-start"
                 spacing={2}
               >
-                {[0, 0, 0, 0, 0, 0, 0].map((model, id) => {
+                {userToShow.map((model, id) => {
                   return <ItemCard model={model} id={id} />;
                 })}
               </Grid>
@@ -42,5 +44,11 @@ const AuctionsDashboard = props => {
     </React.Fragment>
   );
 };
+export default UsersDasboard;
 
-export default AuctionsDashboard;
+UsersDasboard.getInitialProps = async (ctx) => {
+  const users = await getApi().get("users");
+  return {
+    usersData: users.data,
+  };
+};

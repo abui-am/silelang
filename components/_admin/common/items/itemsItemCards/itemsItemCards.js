@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Grid,
   Box,
@@ -12,6 +12,9 @@ import TextTruncate from "react-text-truncate";
 import Img from "react-image";
 import EditIcon from "@material-ui/icons/Edit";
 import clsx from "clsx";
+import dayjs from "dayjs";
+import ItemModal from "../../../items/itemModal";
+import { useRouter } from "next/router";
 
 const ItemsItemCards = ({ models }) => {
   const itemsItemCardsStyle = makeStyles((theme) => ({
@@ -70,6 +73,8 @@ const ItemsItemCards = ({ models }) => {
     },
   }));
   const classes = itemsItemCardsStyle();
+  const [openDetail, setOpenDetail] = useState("");
+  const router = useRouter();
 
   const item = (model, id) => {
     return (
@@ -83,10 +88,17 @@ const ItemsItemCards = ({ models }) => {
         xl={3}
         style={{ position: "relative" }}
       >
+        <ItemModal
+          open={openDetail === model.id_barang}
+          handleClose={() => {
+            setOpenDetail("");
+          }}
+          item={model}
+        />
         <Box className={classes.cardRoot}>
           <Box flexBasis={"112px"} flexShrink={0}>
             <Img
-              src="https://f4.bcbits.com/img/a1310751472_2.jpg"
+              src={model.preview}
               style={{
                 width: "112px",
                 height: "112px",
@@ -102,29 +114,36 @@ const ItemsItemCards = ({ models }) => {
             flexGrow={1}
             minWidth={0}
           >
-            <Typography className={classes.textDate}>16 Juni 1999</Typography>
-
-            <Typography noWrap className={classes.itemName}>
-              Asus ROG 16 Core i5 With Paper Sauce
+            <Typography className={classes.textDate}>
+              {dayjs(model.tgl).format("DD MMM, YYYY")}
             </Typography>
+            <ButtonBase
+              style={{ justifyContent: "left" }}
+              onClick={() => {
+                setOpenDetail(model.id_barang);
+              }}
+            >
+              <Typography noWrap className={classes.itemName}>
+                {model.nama_barang}
+              </Typography>
+            </ButtonBase>
 
             <Box marginBottom={0.75} className={classes.textDesc}>
-              <TextTruncate
-                text=" Some Laptop with powerfull
-Core i 5 processor, for better performace"
-                line={2}
-              />
+              <TextTruncate text={model.deskripsi_barang} line={1} />
             </Box>
 
             <Typography className={clsx(classes.textNormal, classes.textBlue)}>
-              Rp 800.000,00
+              Rp {model.harga_awal}
             </Typography>
           </Box>
-          <Box style={{ position: "absolute", bottom: 10, right: 10 }}>
+          <Box style={{ position: "absolute", top: 16, right: 16 }}>
             <Fab
               size="small"
-              style={{ color: "white", background: "" }}
+              style={{ color: "white", background: "#61AAED" }}
               aria-label="edit"
+              onClick={() => {
+                router.push(`/_admin/items/${model.id_barang}/edit`);
+              }}
             >
               <EditIcon />
             </Fab>

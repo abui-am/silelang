@@ -76,6 +76,14 @@ const useStyles = makeStyles((theme) => ({
     padding: "20px 24px ",
     borderBottom: "1px solid #e4e4e4",
   },
+  subtitle : {
+    fontFamily: 'Lato',
+fontWeight: 'bold',
+fontSize: 14,
+lineHeight: '17px',
+color: '#121212'
+
+  }
 }));
 
 export default function AuctionHistory(props) {

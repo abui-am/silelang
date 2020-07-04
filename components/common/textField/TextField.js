@@ -15,14 +15,14 @@ const StyledTextField = (props) => {
     }
   };
 
-const textFieldStyle = makeStyles((theme) => ({
+  const textFieldStyle = makeStyles((theme) => ({
     TextField: {
       border: "1px solid #E4E4E4",
       boxSizing: "border-box",
       borderRadius: getBorderRadius(variant),
       flexGrow: 1,
       height: 40,
-      padding: "0px 8  px",
+      padding: "0px 8px",
     },
   }));
 

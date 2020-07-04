@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AdminLayout from "../../../layouts/_admin";
+import AdminLayout from "../../../../layouts/_admin";
 import {
   makeStyles,
   Typography,
@@ -10,16 +10,15 @@ import {
   Fab,
 } from "@material-ui/core";
 import dayjs from "dayjs";
-import DividerLine from "../../../components/common/divider/DividerLine";
+import DividerLine from "../../../../components/common/divider/DividerLine";
 import { DropzoneArea } from "material-ui-dropzone";
 import Img from "react-image";
-import { getApi, getApiUpload } from "../../../api/Api";
-import StyledTextField from "../../../components/common/textField/TextField";
+import { getApi, getApiUpload } from "../../../../api/Api";
+import StyledTextField from "../../../../components/common/textField/TextField";
 import CloseIcon from "@material-ui/icons/Close";
-import ButtonMuted from "../../../components/common/button/ButtonMuted";
-import ButtonBlue from "../../../components/common/button/buttonBlue";
-import Axios from "axios";
-
+import ButtonMuted from "../../../../components/common/button/ButtonMuted";
+import ButtonBlue from "../../../../components/common/button/buttonBlue";
+import { useRouter } from "next/router";
 const AdditemStyle = makeStyles((theme) => ({
   title: {
     fontFamily: "Lato",
@@ -87,11 +86,12 @@ const AdditemStyle = makeStyles((theme) => ({
   },
 }));
 
-const AddItem = (props) => {
+const EditItem = (props) => {
   const [files, setFiles] = useState([]);
   const classes = AdditemStyle();
   const [data, setData] = useState({});
-
+  const [deletedImages, setDeletedImages] = useState([]);
+  const router = useRouter();
   const handleChange = (name, value) => {
     const newData = {
       ...data,
@@ -102,28 +102,52 @@ const AddItem = (props) => {
 
   const handleDelete = (index) => {
     const newFiles = Array.from(files);
-    console.log(newFiles);
-    newFiles.splice(index, 1);
+    const deletedImage = newFiles.splice(index, 1);
+    console.log("index", deletedImage.notYetUploaded);
+
+    if (!deletedImage[0].notYetUploaded) {
+      const deleted = [...deletedImages, ...deletedImage];
+      setDeletedImages(deleted);
+    }
     console.log(newFiles);
     setFiles(newFiles);
   };
 
-  const handleSave = async () => {
-    const formData = new FormData();
-    files.map((file) => {
-      formData.append("files", file);
-    });
-    const newData = data;
+  const handleSave = async (data) => {
+    const { itemData } = props;
+    let newData = data;
+    try {
+      if (files.length != 0) {
+        const formData = new FormData();
+        files.map((file) => {
+          if (file.notYetUploaded) formData.append("files", file);
+        });
+        const res = await getApiUpload().post(
+          `items/${itemData.id_barang}/images`,
+          formData
+        );
+      }
+      const deleteList = { imageToDelete: deletedImages };
 
-    const itemData = await getApi().post("items", newData);
+      const delImages = await getApi().post(
+        `items/${itemData.id_barang}/images/delete`,
+        deleteList
+      );
+      const newImage = await getApi().get(`items/${itemData.id_barang}/images`);
+      console.log(delImages);
 
-    console.log(itemData);
-    console.log(formData);
-    const res = await getApiUpload().post(
-      `items/${itemData.data.id_barang}/images`,
-      formData
-    );
-    console.log(res);
+      newData = {
+        ...newData,
+        primaryImage: newImage.data[0].filename,
+        tgl: dayjs(data.tgl).format("YYYY-MM-DD"),
+      };
+
+      const item = getApi().put(`items/${itemData.id_barang}`, newData);
+
+      router.push("/_admin/items");
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const droppedImage = (file, index) => {
@@ -164,6 +188,7 @@ const AddItem = (props) => {
                   ...files,
                   Object.assign(acceptedFiles, {
                     preview: URL.createObjectURL(acceptedFiles),
+                    notYetUploaded: true,
                   }),
                 ]);
               }
@@ -173,6 +198,11 @@ const AddItem = (props) => {
       </Box>
     </Box>
   );
+
+  useEffect(() => {
+    setFiles(props.itemData.images);
+    setData(props.itemData);
+  }, [props]);
 
   return (
     <AdminLayout>
@@ -192,6 +222,7 @@ const AddItem = (props) => {
               fullWidth
               name="id_barang"
               readOnly
+              value={data.id_barang}
               placeholder="Digenerate secara otomatis"
               onChange={(e) => handleChange(e.target.name, e.target.value)}
             ></StyledTextField>
@@ -200,6 +231,7 @@ const AddItem = (props) => {
             <Typography style={{ marginBottom: 4 }}>Nama barang</Typography>
             <StyledTextField
               fullWidth
+              value={data.nama_barang}
               name="nama_barang"
               onChange={(e) => handleChange(e.target.name, e.target.value)}
             ></StyledTextField>
@@ -208,6 +240,7 @@ const AddItem = (props) => {
             <Typography style={{ marginBottom: 4 }}>Tanggal</Typography>
             <StyledTextField
               fullWidth
+              value={dayjs(data.tgl).format("YYYY-MM-DD")}
               type="date"
               name="tgl"
               defaultValue={dayjs().format("YYYY-MM-DD")}
@@ -218,6 +251,7 @@ const AddItem = (props) => {
             <Typography style={{ marginBottom: 4 }}>Harga awal</Typography>
             <StyledTextField
               fullWidth
+              value={data.harga_awal}
               name="harga_awal"
               onChange={(e) => handleChange(e.target.name, e.target.value)}
             ></StyledTextField>
@@ -226,6 +260,7 @@ const AddItem = (props) => {
             <Typography style={{ marginBottom: 4 }}>Deskripsi</Typography>
             <StyledTextField
               multiline
+              value={data.deskripsi_barang}
               line={3}
               fullWidth
               name="deskripsi_barang"
@@ -237,17 +272,20 @@ const AddItem = (props) => {
 
       <Box display="flex" justifyContent="flex-end">
         <ButtonMuted marginRight={2}>Cancel</ButtonMuted>
-        <ButtonBlue onClick={() => handleSave()}>Simpan</ButtonBlue>
+        <ButtonBlue onClick={() => handleSave(data)}>Simpan</ButtonBlue>
       </Box>
     </AdminLayout>
   );
 };
 
-export default AddItem;
+export default EditItem;
 
-AddItem.getInitialProps = async (ctx) => {
+EditItem.getInitialProps = async (ctx) => {
   const { id } = await ctx.query;
+  const itemData = await getApi().get(`items/${id}`);
+
   return {
     itemId: id,
+    itemData: itemData.data,
   };
 };
